@@ -63,21 +63,40 @@ public class Main {
 
 	private static void checkFolders() {
 		String folder = PropertiesUtils.SOURCE.getValue();
-		File repository, source;
+		File repository, source, destination;
 		if (folder == null || folder.isEmpty()) {
 			repository = new File(
 					((folder = PropertiesUtils.REPOSITORY.getValue()) == null || folder.isEmpty()) ? "." : folder);
-			source = GUIUtils.selectDirectory(repository, "Origem");
+			if ((source = GUIUtils.selectDirectory(repository, "Origem")) == null) {
+				return;
+			}
+			PropertiesUtils.SOURCE.setValue(source.getAbsolutePath());
 		} else if (!(source = new File(folder)).exists()) {
-			GUIUtils.show("Diretório não encontrado: " + folder);
+			GUIUtils.show("Diretório de origem não encontrado: " + folder);
 			return;
 		}
 		try {
 			if ((repository = GitUtils.getRepository(source)) == null) {
+				GUIUtils.show("Diretório de origem não pertence a um repositório: " + source);
 				return;
 			}
 			PropertiesUtils.REPOSITORY.setValue(repository.getAbsolutePath());
-			System.out.println(repository);
+			folder = PropertiesUtils.DESTINATION.getValue();
+			if (folder == null || folder.isEmpty()) {
+				if ((destination = GUIUtils.selectDirectory(repository, "Destino")) == null) {
+					return;
+				}
+				PropertiesUtils.DESTINATION.setValue(destination.getAbsolutePath());
+			} else if (!(destination = new File(folder)).exists()) {
+				GUIUtils.show("Diretório de destino não encontrado: " + folder);
+				return;
+			}
+			if (!destination.getAbsolutePath().startsWith(repository.getAbsolutePath())) {
+				GUIUtils.show("O destino não pertence ao repositório.");
+				return;
+			}
+			// TODO MOVER
+			System.out.println(destination);
 		} catch (Throwable t) {
 			GUIUtils.show(t);
 		}

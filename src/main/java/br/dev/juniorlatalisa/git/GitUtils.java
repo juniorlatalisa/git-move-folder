@@ -36,7 +36,7 @@ public class GitUtils {
 	private static final FilenameFilter filter = (dir, name) -> ".git".equals(name);
 
 	public static File getRepository(File dir) throws IOException, InterruptedException {
-		if (!dir.isDirectory()) {
+		if (dir == null || !dir.isDirectory()) {
 			return null;
 		}
 		File[] files = dir.listFiles(filter);

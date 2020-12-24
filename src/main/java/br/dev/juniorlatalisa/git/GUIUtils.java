@@ -60,11 +60,11 @@ public final class GUIUtils {
 
 	public static void show(Throwable throwable) {
 		// TODO Auto-generated method stub
-
+		System.err.println(throwable);
 	}
 
 	public static void show(String string) {
 		// TODO Auto-generated method stub
-
+		System.out.println(string);
 	}
 }
