@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 public class Main {
 
-	private static final Logger LOGGER = Logger.getLogger("GitMoveFolder");
+	protected static final Logger LOGGER = Logger.getLogger("GitMoveFolder");
 
 	public static void main(String[] args) {
 		printProperties();
@@ -18,8 +18,32 @@ public class Main {
 			LOGGER.log(Level.WARNING, "Falha ao carregar as propriedades", e);
 			return;
 		}
+		checkProperties(args);
+		try {
+			if (PropertiesUtils.GIT.getValue() == null || PropertiesUtils.GIT.getValue().isEmpty()) {
+				setGitValue();
+			} else {
+				checkGitValue();
+			}
+			if (!GitUtils.isAtivo()) {
+				return;
+			}
+			checkFolders();
+		} finally {
+			GUIUtils.dispose();
+		}
+		try {
+			PropertiesUtils.store();
+		} catch (IOException e) {
+			LOGGER.log(Level.WARNING, "Falha ao gravar as propriedades", e);
+		}
+	}
+
+	private static void checkProperties(String[] args) {
 		String key, value;
 		PropertiesUtils property;
+		PropertiesUtils.DESTINATION.setValue(null);
+		PropertiesUtils.SOURCE.setValue(null);
 		for (int i = 0; i < args.length; i += 2) {
 			if (((key = args[i]) == null) || (key.length() < 3)) {
 				continue;
@@ -35,14 +59,27 @@ public class Main {
 			}
 			property.setValue(value);
 		}
+	}
+
+	private static void checkFolders() {
+		String folder = PropertiesUtils.SOURCE.getValue();
+		File repository, source;
+		if (folder == null || folder.isEmpty()) {
+			repository = new File(
+					((folder = PropertiesUtils.REPOSITORY.getValue()) == null || folder.isEmpty()) ? "." : folder);
+			source = GUIUtils.selectDirectory(repository, "Origem");
+		} else if (!(source = new File(folder)).exists()) {
+			GUIUtils.show("Diretório não encontrado: " + folder);
+			return;
+		}
 		try {
-			if (PropertiesUtils.GIT.getValue() == null || PropertiesUtils.GIT.getValue().isEmpty()) {
-				setGitValue();
-			} else {
-				checkGitValue();
+			if ((repository = GitUtils.getRepository(source)) == null) {
+				return;
 			}
-		} finally {
-			GUIUtils.dispose();
+			PropertiesUtils.REPOSITORY.setValue(repository.getAbsolutePath());
+			System.out.println(repository);
+		} catch (Throwable t) {
+			GUIUtils.show(t);
 		}
 	}
 
@@ -57,12 +94,10 @@ public class Main {
 				}
 			}
 			PropertiesUtils.GIT.setValue(null);
-			PropertiesUtils.store();
 			setGitValue();
 		} catch (Throwable t) {
 			GUIUtils.show(t);
 		}
-
 	}
 
 	private static void setGitValue() {
@@ -71,7 +106,6 @@ public class Main {
 		try {
 			if (GitUtils.checkGitCommand(git)) {
 				PropertiesUtils.GIT.setValue(git.getAbsolutePath());
-				PropertiesUtils.store();
 				LOGGER.info("Carregando executável do Git: " + git);
 			}
 		} catch (Throwable t) {

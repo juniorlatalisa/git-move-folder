@@ -2,6 +2,7 @@ package br.dev.juniorlatalisa.git;
 
 import java.awt.Frame;
 import java.io.File;
+import java.util.logging.Level;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,29 +24,34 @@ public final class GUIUtils {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Throwable t) {
-				t.printStackTrace();
+				Main.LOGGER.log(Level.WARNING, "Falha ao atribuir LookAndFeel", t);
 			}
 			frame = new JFrame();
 		}
 		return frame;
 	}
 
-	private static JFileChooser getFileChooser(int mode) {
+	private static JFileChooser getFileChooser(File currentDirectory, int mode) {
 		if (fileChooser == null) {
 			getFrame();
 			fileChooser = new JFileChooser();
-			fileChooser.setCurrentDirectory(new File(
-					(PropertiesUtils.REPOSITORY.getValue() == null || PropertiesUtils.REPOSITORY.getValue().isEmpty())
-							? "."
-							: PropertiesUtils.REPOSITORY.getValue()));
 			fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
 		}
+		fileChooser.setCurrentDirectory(currentDirectory);
 		fileChooser.setFileSelectionMode(mode);
 		return fileChooser;
 	}
 
 	public static File selectFile(String approveButtonText) {
-		if (JFileChooser.APPROVE_OPTION == getFileChooser(JFileChooser.FILES_ONLY).showDialog(frame,
+		return selectFile(new File(".").toPath().getRoot().toFile(), JFileChooser.FILES_ONLY, approveButtonText);
+	}
+
+	public static File selectDirectory(File currentDirectory, String approveButtonText) {
+		return selectFile(currentDirectory, JFileChooser.DIRECTORIES_ONLY, approveButtonText);
+	}
+
+	private static File selectFile(File currentDirectory, int mode, String approveButtonText) {
+		if (JFileChooser.APPROVE_OPTION == getFileChooser(currentDirectory, mode).showDialog(frame,
 				approveButtonText)) {
 			return fileChooser.getSelectedFile();
 		}
@@ -53,6 +59,12 @@ public final class GUIUtils {
 	}
 
 	public static void show(Throwable throwable) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public static void show(String string) {
+		// TODO Auto-generated method stub
 
 	}
 }

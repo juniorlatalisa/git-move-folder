@@ -1,10 +1,17 @@
 package br.dev.juniorlatalisa.git;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 
 public class GitUtils {
+
+	private static File git = null;
+
+	public static boolean isAtivo() {
+		return git != null && git.exists();
+	}
 
 	private static int execute(File directory, String... command) throws IOException, InterruptedException {
 		Process retorno = new ProcessBuilder(command)//
@@ -19,10 +26,23 @@ public class GitUtils {
 	}
 
 	public static boolean checkGitCommand(File git) throws IOException, InterruptedException {
-		return 0 == execute(git.getParentFile(), git.getName(), "--version");
+		if (0 == execute(git.getParentFile(), git.getName(), "--version")) {
+			GitUtils.git = git;
+			return true;
+		}
+		return false;
 	}
 
-//	public static void main(String[] args) throws IOException, InterruptedException {
-//		System.out.println(checkGitCommand(new File("C:\\Program Files\\Git\\cmd\\git.exe")));
-//	}
+	private static final FilenameFilter filter = (dir, name) -> ".git".equals(name);
+
+	public static File getRepository(File dir) throws IOException, InterruptedException {
+		if (!dir.isDirectory()) {
+			return null;
+		}
+		File[] files = dir.listFiles(filter);
+		if (!(files == null || files.length == 0)) {
+			return (0 == execute(dir, git.getAbsolutePath(), "status")) ? dir : null;
+		}
+		return getRepository(dir.getParentFile());
+	}
 }
