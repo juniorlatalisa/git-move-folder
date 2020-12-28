@@ -95,8 +95,7 @@ public class Main {
 				GUIUtils.show("O destino não pertence ao repositório.");
 				return;
 			}
-			// TODO MOVER
-			System.out.println(destination);
+			MoveFolder.move(repository, source, destination);
 		} catch (Throwable t) {
 			GUIUtils.show(t);
 		}
