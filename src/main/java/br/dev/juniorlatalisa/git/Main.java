@@ -74,12 +74,12 @@ public class Main {
 			}
 			PropertiesUtils.SOURCE.setValue(source.getAbsolutePath());
 		} else if (!(source = new File(folder)).exists()) {
-			GUIUtils.show("Diretório de origem não encontrado: " + folder);
+			GUIUtils.warning("Diretório de origem não encontrado: " + folder);
 			return;
 		}
 		try {
 			if ((repository = GitUtils.getRepository(source)) == null) {
-				GUIUtils.show("Diretório de origem não pertence a um repositório: " + source);
+				GUIUtils.warning("Diretório de origem não pertence a um repositório: " + source);
 				return;
 			}
 			PropertiesUtils.REPOSITORY.setValue(repository.getAbsolutePath());
@@ -90,15 +90,16 @@ public class Main {
 				}
 				PropertiesUtils.DESTINATION.setValue(destination.getAbsolutePath());
 			} else if (!(destination = new File(folder)).exists()) {
-				GUIUtils.show("Diretório de destino não encontrado: " + folder);
+				GUIUtils.warning("Diretório de destino não encontrado: " + folder);
 				return;
 			}
 			if (!destination.getAbsolutePath().startsWith(repository.getAbsolutePath())) {
-				GUIUtils.show("O destino não pertence ao repositório.");
+				GUIUtils.warning("O destino não pertence ao repositório.");
 				return;
 			}
+			GUIUtils.info("Iniciando...");
 			LocalDateTime start = LocalDateTime.now();
-			GUIUtils.info(String.format("Foram %d arquivo(s) movido(s) em %d segundo(s)", //
+			GUIUtils.show(String.format("Foram %d arquivo(s) movido(s) em %d segundo(s)", //
 					MoveFolder.move(repository, source, destination), //
 					start.until(LocalDateTime.now(), ChronoUnit.SECONDS)));
 		} catch (Throwable t) {
