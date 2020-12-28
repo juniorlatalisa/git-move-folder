@@ -67,4 +67,9 @@ public final class GUIUtils {
 		// TODO Auto-generated method stub
 		System.out.println(string);
 	}
+	
+	public static void info(String string) {
+		// TODO Auto-generated method stub
+		System.out.println(string);
+	}
 }

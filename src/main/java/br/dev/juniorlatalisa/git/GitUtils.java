@@ -9,7 +9,7 @@ public class GitUtils {
 
 	private static String git = null;
 
-	public static boolean isAtivo() {
+	public static boolean isChecked() {
 		return !(git == null || git.isEmpty());
 	}
 
@@ -29,7 +29,7 @@ public class GitUtils {
 		return retorno.exitValue();
 	}
 
-	public static boolean checkGitCommand(File git) throws IOException {
+	public static boolean checkCommand(File git) throws IOException {
 		if (0 == execute(git.getParentFile(), git.getName(), "--version")) {
 			GitUtils.git = git.getAbsolutePath();
 			return true;

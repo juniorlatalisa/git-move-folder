@@ -2,6 +2,8 @@ package br.dev.juniorlatalisa.git;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,7 +27,7 @@ public class Main {
 			} else {
 				checkGitValue();
 			}
-			if (!GitUtils.isAtivo()) {
+			if (!GitUtils.isChecked()) {
 				return;
 			}
 			checkFolders();
@@ -95,7 +97,10 @@ public class Main {
 				GUIUtils.show("O destino não pertence ao repositório.");
 				return;
 			}
-			MoveFolder.move(repository, source, destination);
+			LocalDateTime start = LocalDateTime.now();
+			GUIUtils.info(String.format("Foram %d arquivo(s) movido(s) em %d segundo(s)", //
+					MoveFolder.move(repository, source, destination), //
+					start.until(LocalDateTime.now(), ChronoUnit.SECONDS)));
 		} catch (Throwable t) {
 			GUIUtils.show(t);
 		}
@@ -106,7 +111,7 @@ public class Main {
 		File git = new File(PropertiesUtils.GIT.getValue());
 		try {
 			if (git.exists()) {
-				if (GitUtils.checkGitCommand(git)) {
+				if (GitUtils.checkCommand(git)) {
 					LOGGER.info("Carregando executável do Git: " + git);
 					return;
 				}
@@ -122,7 +127,7 @@ public class Main {
 		LOGGER.info("Carregando executável do Git...");
 		File git = GUIUtils.selectFile("Git");
 		try {
-			if (GitUtils.checkGitCommand(git)) {
+			if (GitUtils.checkCommand(git)) {
 				PropertiesUtils.GIT.setValue(git.getAbsolutePath());
 				LOGGER.info("Carregando executável do Git: " + git);
 			}
