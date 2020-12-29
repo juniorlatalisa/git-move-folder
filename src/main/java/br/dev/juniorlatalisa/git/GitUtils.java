@@ -19,14 +19,11 @@ public class GitUtils {
 				.redirectOutput(Redirect.INHERIT)//
 				.redirectError(Redirect.INHERIT)//
 				.start();
-		while (retorno.isAlive()) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
+		try {
+			return retorno.waitFor();
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
 		}
-		return retorno.exitValue();
 	}
 
 	public static boolean checkCommand(File git) throws IOException {
