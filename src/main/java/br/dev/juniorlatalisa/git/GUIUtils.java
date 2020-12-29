@@ -45,7 +45,7 @@ public final class GUIUtils {
 		if (label == null) {
 			label = new Label(null);
 			label.setBackground(frame.getBackground());
-			label.setAlignment(Label.RIGHT);
+			label.setAlignment(Label.LEFT);
 			label.setFont(new Font(Font.MONOSPACED, Font.BOLD, 20));
 
 			Dimension screen = Toolkit.getDefaultToolkit().getScreenSize();

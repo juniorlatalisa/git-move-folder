@@ -13,7 +13,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		printProperties();
-		LOGGER.info("Carregando propriedades...");
+		GUIUtils.info("Carregando propriedades...");
 		try {
 			PropertiesUtils.load();
 		} catch (IOException e) {
@@ -108,12 +108,12 @@ public class Main {
 	}
 
 	private static void checkGitValue() {
-		LOGGER.info("Verificando executável do Git...");
+		GUIUtils.info("Verificando executável do Git...");
 		File git = new File(PropertiesUtils.GIT.getValue());
 		try {
 			if (git.exists()) {
 				if (GitUtils.checkCommand(git)) {
-					LOGGER.info("Carregando executável do Git: " + git);
+					GUIUtils.info("Carregando executável do Git: " + git);
 					return;
 				}
 			}
@@ -125,12 +125,12 @@ public class Main {
 	}
 
 	private static void setGitValue() {
-		LOGGER.info("Carregando executável do Git...");
+		GUIUtils.info("Carregando executável do Git...");
 		File git = GUIUtils.selectFile("Git");
 		try {
 			if (GitUtils.checkCommand(git)) {
 				PropertiesUtils.GIT.setValue(git.getAbsolutePath());
-				LOGGER.info("Carregando executável do Git: " + git);
+				GUIUtils.info("Carregando executável do Git: " + git);
 			}
 		} catch (Throwable t) {
 			GUIUtils.show(t);
@@ -140,6 +140,6 @@ public class Main {
 	private static void printProperties() {
 		StringBuilder info = new StringBuilder("Propriedades");
 		PropertiesUtils.VALUES.keySet().forEach(key -> info.append("\n\t--").append(key));
-		LOGGER.info(info.toString());
+		GUIUtils.info(info.toString());
 	}
 }

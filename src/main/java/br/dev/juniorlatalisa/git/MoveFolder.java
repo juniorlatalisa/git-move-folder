@@ -41,11 +41,12 @@ public class MoveFolder {
 	}
 
 	private static void moveFile(final File repository, final File source, final File destination) throws IOException {
+		String info = destination.getAbsolutePath().replace(repository.getAbsolutePath(), "..");
 		if (GitUtils.move(repository, source, destination)) {
-			GUIUtils.info("GitMove ...: " + destination);
+			GUIUtils.info("GitMove ...: " + info);
 			return;
 		}
 		Files.move(source.toPath(), destination.toPath(), StandardCopyOption.ATOMIC_MOVE);
-		GUIUtils.info("unGitMove .: " + destination);
+		GUIUtils.info("unGitMove .: " + info);
 	}
 }
