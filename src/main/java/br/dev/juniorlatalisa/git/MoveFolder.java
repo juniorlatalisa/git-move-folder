@@ -8,11 +8,15 @@ import java.nio.file.StandardCopyOption;
 public class MoveFolder {
 
 	public static int move(File repository, File source, File destination) throws IOException {
-		if (!(repository.isDirectory() && source.isDirectory() && destination.isDirectory())) {
+		if (!(repository.isDirectory() && source.isDirectory())) {
 			return -1;
 		}
-		if (destination.exists() && destination.list().length > 0) {
-			destination = new File(destination, source.getName());
+		if (destination.exists()) {
+			if (destination.list().length > 0) {
+				destination = new File(destination, source.getName());
+			}
+		} else {
+			destination.mkdirs();
 		}
 		if (!GitUtils.isChecked()) {
 			return -1;

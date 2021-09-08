@@ -71,7 +71,7 @@ public final class GUIUtils {
 	}
 
 	public static File selectFile(String approveButtonText) {
-		return selectFile(new File(".").toPath().getRoot().toFile(), JFileChooser.FILES_ONLY, approveButtonText);
+		return selectFile(new File(System.getProperty("user.home")), JFileChooser.FILES_ONLY, approveButtonText);
 	}
 
 	public static File selectDirectory(File currentDirectory, String approveButtonText) {
